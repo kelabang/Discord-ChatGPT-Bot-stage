@@ -1,4 +1,4 @@
-import { ChatGPTUnofficialProxyAPI  } from 'chatgpt'
+import { ChatGPTUnofficialProxyAPI, ChatGPTAPI  } from 'chatgpt'
 import { getAccessToken } from './access_token.js'
 
 const chatGPT = {
@@ -6,12 +6,30 @@ const chatGPT = {
     sendMessage: null,
 }
 
-export async function initChatGPT() {
+async function methodProxyAPI() {
     const api = new ChatGPTUnofficialProxyAPI ({
         accessToken: await getAccessToken(),
         apiReverseProxyUrl: process.env.API_REVERSE_PROXY_SERVER
     })
 
+   return api
+}
+
+async function methodTokenAPI() {
+    const api = new ChatGPTAPI({
+        apiKey: process.env.OPENAI_TOKEN_KEY
+    }) 
+    return api
+}
+
+export async function initChatGPT() {
+    let api
+    if(process.env.MODE_OPENAI_AUTH === "token") {
+        api = await methodTokenAPI()
+    }
+    else {
+        api = await methodProxyAPI()
+    }
     chatGPT.sendMessage = async (message, opts = {}) => {
         let result = await api.sendMessage(message, {
             ...opts
