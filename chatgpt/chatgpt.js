@@ -24,6 +24,7 @@ async function methodTokenAPI() {
 
 export async function initChatGPT() {
     let api
+    console.log(process.env.MODE_OPENAI_AUTH)
     if(process.env.MODE_OPENAI_AUTH === "token") {
         api = await methodTokenAPI()
     }
