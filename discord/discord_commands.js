@@ -7,24 +7,24 @@ import { generateInteractionReply, createEmbedsForImageCommand } from './discord
 
 export const commands = [
     {
-        name: 'ask',
-        description: 'Ask Anything!',
+        name: 'ngobrol',
+        description: 'Ngobrol apa aja!',
         options: [
             {
                 name: "question",
-                description: "Your question",
+                description: "Obrolan lu",
                 type: 3,
                 required: true
             }
         ]
     },
     {
-        name: 'image',
-        description: 'Ask Anything!',
+        name: 'gambar',
+        description: 'Minta gambar apa aja!',
         options: [
             {
                 name: "prompt",
-                description: "Your prompt",
+                description: "Gambar apa ya",
                 type: 3,
                 required: true
             }
@@ -45,11 +45,13 @@ export async function initDiscordCommands() {
 }
 
 export async function handle_interaction_ask(interaction) {
+    console.log('handle_interaction_ask')
     const user = interaction.user
 
     // Begin conversation
     let conversationInfo = Conversations.getConversation(user.id)
     const question = interaction.options.getString("question")
+    console.log({question})
     await interaction.deferReply()
     if (question.toLowerCase() == "reset") {
         generateInteractionReply(interaction,user,question,"Who are you ?")
@@ -66,6 +68,7 @@ export async function handle_interaction_ask(interaction) {
 }
 
 export async function handle_interaction_image(interaction) {
+    console.log('handle_interaction_image')
     const user = interaction.user
     const prompt = interaction.options.getString("prompt")
     try {

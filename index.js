@@ -65,11 +65,12 @@ async function main() {
     })
 
     client.on("interactionCreate", async interaction => {
+        console.log({interaction})
         switch (interaction.commandName) {
-            case "ask":
+            case "ngobrol":
                 handle_interaction_ask(interaction)
                 break;
-            case "image":
+            case "gambar":
                 handle_interaction_image(interaction)
                 break
         }
