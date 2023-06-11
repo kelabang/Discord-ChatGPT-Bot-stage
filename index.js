@@ -56,19 +56,8 @@ async function main() {
     })
 
     client.on("interactionCreate", async interaction => {
-<<<<<<< HEAD
-        console.log({interaction})
-        switch (interaction.commandName) {
-            case "ngobrol":
-                handle_interaction_ask(interaction)
-                break;
-            case "gambar":
-                handle_interaction_image(interaction)
-                break
-=======
         if(commandExecuters[interaction.commandName]){
             commandExecuters[interaction.commandName](interaction,client)
->>>>>>> upstream/master
         }
     });
 
