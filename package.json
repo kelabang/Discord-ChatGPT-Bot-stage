@@ -14,7 +14,7 @@
   "dependencies": {
     "aikey": "^1.0.2",
     "chatgpt": "^4.7.2",
-    "discord.js": "^14.7.1",
+    "discord.js": "^14.11.0",
     "dotenv": "^16.0.3",
     "ws": "^8.11.0"
   },
