@@ -1,17 +1,15 @@
 import 'dotenv/config'
 import { Client, GatewayIntentBits, Partials, ChannelType } from 'discord.js'
-import { initChatGPT, askQuestion } from './chatgpt/chatgpt.js'
-import { initDiscordCommands, handle_interaction_ask, handle_interaction_image } from './discord/discord_commands.js'
+
+import config from './config/config.js'
+import { askQuestion } from './chatgpt/chatgpt.js'
+import { initDiscordCommands, handle_interaction_ask, handle_interaction_image, handle_interaction_remix, commandExecuters } from './discord/discord_commands.js'
 import { splitAndSendResponse, MAX_RESPONSE_CHUNK_LENGTH } from './discord/discord_helpers.js'
-import Conversations from './chatgpt/conversations.js'
+import { initDashboard } from './dashboard/dasboard.js'
 
 async function main() {
-    await initChatGPT().catch(e => {
-        console.error(e)
-        process.exit()
-    })
-
     await initDiscordCommands()
+    initDashboard()
 
     const client = new Client({
         intents: [
@@ -20,7 +18,7 @@ async function main() {
             GatewayIntentBits.GuildIntegrations,
             GatewayIntentBits.DirectMessages,
             GatewayIntentBits.DirectMessageTyping,
-            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.MessageContent
         ],
         partials: [Partials.Channel]
     });
@@ -31,7 +29,7 @@ async function main() {
     });
 
     client.on("messageCreate", async message => {
-        if (process.env.ENABLE_DIRECT_MESSAGES !== "true" || message.channel.type != ChannelType.DM || message.author.bot) {
+        if (config.get("ENABLE_DIRECT_MESSAGES") !== "true" || message.channel.type != ChannelType.DM || message.author.bot) {
             return;
         }
         const user = message.author
@@ -43,13 +41,6 @@ async function main() {
         console.log("Message : " + message.content)
         console.log("--------------")
 
-        if (message.content.toLowerCase() == "reset") {
-            Conversations.resetConversation(user.id)
-            user.send("Who are you ?")
-            return;
-        }
-
-        let conversationInfo = Conversations.getConversation(user.id)
         try {
             let sentMessage = await user.send("Hmm, let me think...")
             askQuestion(message.content, async (response) => {
@@ -58,13 +49,14 @@ async function main() {
                 } else {
                     await sentMessage.edit(response)
                 }
-            }, { conversationInfo })
+            })
         } catch (e) {
             console.error(e)
         }
     })
 
     client.on("interactionCreate", async interaction => {
+<<<<<<< HEAD
         console.log({interaction})
         switch (interaction.commandName) {
             case "ngobrol":
@@ -73,6 +65,10 @@ async function main() {
             case "gambar":
                 handle_interaction_image(interaction)
                 break
+=======
+        if(commandExecuters[interaction.commandName]){
+            commandExecuters[interaction.commandName](interaction,client)
+>>>>>>> upstream/master
         }
     });
 
